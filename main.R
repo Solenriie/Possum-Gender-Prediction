@@ -1,9 +1,70 @@
+#utils::install.packages('') - install new package
+#renv::snapshot()
 #this dataset is downloaded from Kaggle: https://www.kaggle.com/datasets/abrambeyer/openintro-possum
 #it will be used for gender prediction of a possum
 
+library("ggplot2")
+library("corrplot")
+library("dplyr")
+library("FactoMineR")
+library("factoextra")
+
 #loading dataset
-possum <- read.csv("E:/Projects/My Projects/Possum/possum.csv")
+possum <- read.csv("E:/Projects/My Projects/Possum-Gender-Prediction/possum.csv")
+
 #writing into console number of NA rows
 colSums(is.na(possum))
+
 #remove NA rows
 possum <- na.omit(possum)
+
+#convert selected columns: mm -> cm
+possum['hdlngth'] <- round(possum['hdlngth']*0.1, 1)
+possum['skullw'] <- round(possum['skullw']*0.1, 1)
+possum['earconch'] <- round(possum['earconch']*0.1, 1)
+possum['footlgth'] <- round(possum['footlgth']*0.1, 1)
+possum['eye'] <- round(possum['eye']*0.1, 1)
+
+#remove less important columns
+possum = possum %>% select(- c(case, site))
+
+#counts how many possums have certain age
+plot1 <- ggplot(possum)+geom_histogram(aes(age), binwidth =0.5, color="black", fill="orange")
+plot1
+
+#Multivariate Analysis for total length and tail length
+plot2 <- ggplot(possum) + geom_point(aes(totlngth, taill), colour = "purple", alpha = 0.8) + theme(axis.title = element_text(size = 8.5))
+plot2
+
+#Multivariate Analysis for head length and skull width
+plot3 <- ggplot(possum) + geom_point(aes(hdlngth, skullw), colour = "blue", alpha = 0.8) + theme(axis.title = element_text(size = 8.5))
+plot3
+
+#put only numeric values in num set
+num=possum%>%select_if(is.numeric)
+
+#PCA (Principal Component Analysis)
+res.pca <- PCA(num, graph = FALSE)
+get_eigenvalue(res.pca)
+fviz_eig(res.pca)
+get_pca_ind(res.pca)
+fviz_pca_ind(res.pca)
+get_pca_var(res.pca)
+fviz_pca_var(res.pca)
+fviz_pca_biplot(res.pca)
+
+#Correlated matrix
+corMatrix=cor(num)
+corrplot(corMatrix,order = "FPC",method = "color",type = "lower", tl.cex = 0.6, tl.col = "black")
+
+#make this example reproducible
+set.seed(1)
+#use 70% of dataset as training set and 30% as test set and same 30% as validate set
+d <- sample(c(TRUE, FALSE), nrow(possum), replace=TRUE, prob=c(0.7,0.3))
+train<- possum[d, ]
+test <- possum[!d, ]
+validate <- possum[!d, ]
+
+#remove 'sex' column from test
+test = test[,!(colnames(test) == "sex")]
+
