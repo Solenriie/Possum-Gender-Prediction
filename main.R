@@ -83,5 +83,5 @@ CFM = table(test$sex, test$predict_gender)
 CFM
 
 #accuracy of gender prediction
-accuracy = round(sum(diag(CFM)/sum(CFM)), 2)
+accuracy = round(sum(diag(CFM))/sum(CFM), 2)
 accuracy
