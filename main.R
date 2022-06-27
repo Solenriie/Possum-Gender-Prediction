@@ -3,6 +3,7 @@
 #this dataset is downloaded from Kaggle: https://www.kaggle.com/datasets/abrambeyer/openintro-possum
 #it will be used for gender prediction of a possum
 
+#loading used libraries
 library("ggplot2")
 library("corrplot")
 library("dplyr")
@@ -11,7 +12,7 @@ library("factoextra")
 library("randomForest")
 
 #loading dataset
-possum <- read.csv("E:/Projects/My Projects/Possum-Gender-Prediction/possum.csv")
+possum <- read.csv("possum.csv")
 
 #writing into console number of NA rows
 colSums(is.na(possum))
@@ -66,13 +67,14 @@ corMatrix=cor(num)
 corrplot(corMatrix,order = "FPC",method = "color",type = "lower", tl.cex = 0.6, tl.col = "black")
 
 #make this example reproducible
-set.seed(1)
+set.seed(16)
+
 #use 70% of dataset as training set and 30% as test set and same 30% as validate set
 d <- sample(c(TRUE, FALSE), nrow(possum), replace=TRUE, prob=c(0.7,0.3))
 train <- possum[d, ]
 test <- possum[!d, ]
 
-#random forest algorithm
+#random forest algorithm (as.factor() is used for classification?)
 RFM = randomForest(as.factor(sex)~., data = train)
 predict_gender = predict(RFM, test)
 test$predict_gender = predict_gender
