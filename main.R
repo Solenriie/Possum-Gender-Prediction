@@ -1,14 +1,10 @@
-#utils::install.packages('') - install new package
-#renv::snapshot() - save packages
 #this dataset is downloaded from Kaggle: https://www.kaggle.com/datasets/abrambeyer/openintro-possum
-#it will be used for gender prediction of a possum
+#dataset will be used for gender prediction of a possum
 
-#loading used libraries
+#loading libraries that are used in this project
 library("ggplot2")
 library("corrplot")
 library("dplyr")
-library("FactoMineR")
-library("factoextra")
 library("randomForest")
 
 #loading dataset
@@ -74,6 +70,9 @@ View(test)
 CFM = table(test$sex, test$predict_gender)
 CFM
 
-#accuracy of gender prediction
-accuracy = round(sum(diag(CFM))/sum(CFM), 2)
+#accuracy of gender prediction according to confusion matrix
+accuracy = round(sum(diag(CFM)) / sum(CFM), 2) * 100
 accuracy
+
+# utils::install.packages('') - install new package
+# renv::snapshot() - save packages
