@@ -50,17 +50,7 @@ plot4 <- ggplot(possum %>% group_by(sex) %>% summarise(Count = n())) + geom_bar(
 plot4
 
 #put only numeric values in num set
-num=possum %>% select_if(is.numeric)
-
-#PCA (Principal Component Analysis)
-res.pca <- PCA(num, graph = FALSE)
-get_eigenvalue(res.pca)
-fviz_eig(res.pca)
-get_pca_ind(res.pca)
-fviz_pca_ind(res.pca)
-get_pca_var(res.pca)
-fviz_pca_var(res.pca)
-fviz_pca_biplot(res.pca)
+num = possum %>% select_if(is.numeric)
 
 #Correlated matrix
 corMatrix=cor(num)
@@ -80,7 +70,7 @@ predict_gender = predict(RFM, test)
 test$predict_gender = predict_gender
 View(test)
 
-#create a matrix of genders
+#create a confusion matrix for genders
 CFM = table(test$sex, test$predict_gender)
 CFM
 
